@@ -1,0 +1,53 @@
+================
+== LSTM
+================
+> prev_pred + new input -> ignore -> forget -> select -> predict
+
+LSTM(# of cell, input_shape = (time_step, time_series), ...)
+
+=================
+== RNN
+=================
+>input_shape (keyword for input dimension)
+    :(time_step, data_dimension)
+    eg time_step = 5
+        len(input) = 100
+
+        given 1,2,...,100
+
+        1,2,3,4,5 -> sample1
+
+        2,3,4,5,6 -> sample2
+
+        3,4,5,6,7 -> sample3'
+
+        etc.
+
+        after apply time step this matrix should be reshape as(96*5*1)
+        where
+            96 = number of samples
+            5 = number of time_step
+            1 = number time_series where time_series =
+            (what is time series?)
+
+>Time Steps
+    :are ticks of time. It is how long in time each of your samples are.
+     For example, a sample can contain 128 time steps, where each time steps could be
+     a 30th of a second for signal processing. In Natural Language Processing (NLP),
+     a time step may be associated with a character, a word, or a sentence, depending
+     on the setup.
+
+
+Callback
+> model.fit will return history object
+    >> 2 ways to get access to history callback
+        :assign model.fit to history
+               eg history = model.fit()
+        :create custom history class and pass it to model's "callback" parameter
+        eg
+            class lossHistory(tensorflow.keras.callbacks.Callback()):
+                #define method that you wish to manipulate
+
+            history = lossHistory()
+            model.fit(callback = [history])
+            print(history.loss)

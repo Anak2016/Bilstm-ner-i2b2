@@ -1,0 +1,66 @@
+####################3
+## tuning parameters
+####################
+> overfit after 4 epoch.
+
+#####################
+
+>step to embedding feature
+    >> uniq_word -> uniq_word_vector_embedding_value(words_embbeding value)
+    >> construct sentences_feature from words_embedding value
+
+>How to add feature
+    >concatenate embedding layers
+        :using concate()
+    >
+
+
+>LSTM()
+    >return sequence
+        (#_sequence, #_timestep,#_units)
+    >do not return sequence
+        :return the last timestep (in my case, last word)
+        :many to 1
+        (#_sequence, #_units)
+    eg
+        5 sentences(batches)
+        each contains 10 words (time_step)
+            :padd so that all have length 10
+
+        lstm layer has 15 cell units
+        output with sequence
+            :(5,10,15)
+        output without sequence
+            :(5,15)
+
+>Embedding() map indices to vector
+    >Embedding(#_uniq, vector embed dim, input_length)
+    input = (#_uniq, input_dim)
+
+    model = Sequential()
+    model.add(Embedding(...)
+    output_array = model.predict(input_array)
+
+    output.shape[-1] = vector embed dim
+    output.shape[-2] = input_length
+
+>TimeDistributed
+    >fully connect ignore temporal factor
+
+>Masking = is used when there is mismatched in actual input data and desired input data by the model (which is fixed)
+
+    eg.
+        mask = [ 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
+        a = [ 2., 0. ,5. ,6. ]
+        mask_a = [ 1., 1., 1., 1., 0., 0., 0., 0., 0., 0.]
+        a_hood = [ 2., 0. ,5. ,6., 0., 0., 0., 0., 0., 0.]
+
+    note
+        >The mask_a is going to be used to skip any input with mask 0 by copying the previous hidden state of the cell;
+        it will proceed normally for any input with mask 1.
+
+>Tensorboard
+    >inspect if file directory exist
+        :tensorboard --inspect --logdir ./callback/NER_kaggle/traning.tensorboard
+    >show on Chrome
+        :tensorboard --logdir=./callback/NER_kaggle/traning.tensorboard

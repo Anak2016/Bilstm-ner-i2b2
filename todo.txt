@@ -1,0 +1,128 @@
+###################
+## data preprocessing
+####################
+given words + pos + tag
+step
+:create to sentence = (words,pos,tag)
+    >read CliNER how its features are embedding before feeding into bilstm-crf
+:convert to uniq_id
+    >word to word_uniq_id
+    >tag to tag_uniq_id
+:substitute uniq_id into sentence
+    :in example tag is not included
+    > (words,pos,tag) -> (word_uniq_id, tag_uniq_id)
+
+> what is feature in bilstm_crf_kaggle.py
+    :steps
+        >>words
+        >>group words into separate sentence
+            :for both label and training
+        >>padd so that each sentence has 140 uniq_words
+            :uniq_word = feature
+            note
+                :max sentence has 140 uniq words
+    >So what is the need of groupping them into sentences first?
+
+> DictVectorizer vs Embedding
+    :sucessfully use multiple feature with DictVectorizer
+    >try using multifeature feature with Embedding
+        : I think we jsut change input_dim to # of uniq_features
+        : list vs numpy.array
+        >> test this new feature embedding vs old one (words feature)
+
+####################
+### todo
+####################
+> try multiple embedding
+    > pad POS feature with Z.
+    > pad lemma features with 0
+
+
+> add  more feature to it
+> modify input features
+    training : (#_sent, #_words, #_features)
+    lable    : (#_sent, #_words, labels)
+
+>how to create label for input with multiple feature
+    >in bilstm_crf_kaggel
+        training
+            :(#_sent, #_words)
+        label
+            :(#_sent, #_words, #_category)
+            >>for each sent, there are n #_words_vector
+            >>for each word, there are n #_category_vector
+    > in loading_data_kaggle
+        training
+            :(#_words, #_features)
+            >>for each word, there are #_features_vector
+        lable
+            :(#_words, #_category)
+            >>for each word, there are #_category
+    :which function should I use?
+        >> TimeDistributed vs Dense
+            :What are the differences?
+        >>which function support
+            :1 to 1
+            :many to 1
+        >>how do I know if mine is the followign?
+            :1 to 1 or many to 1
+
+
+> fix y_train shape to be 3 dimension
+    >>unhashalbe type: 'numpy.ndarray' line 53
+
+> Embedding multiple feature using Embedding function
+    :in bilstm_crf_kaggle
+        >each word has 1 feature which is uniq_word
+        >each sent has 140 words (features)
+
+    >>make changes from bilstm_crf_kaggle
+        :each word have n number of features
+        :if group into sent
+            >>each sent must have 140 * n number of features
+
+        >>> after, succesfully embedding multiples feature
+            : group words into sentences?
+
+> use feature given in ner.csv to improve  accuracy
+
+> preprocessing dataset from ner i2b2 dataset
+> run the model
+    >>check accuracy, and other performance parameter
+> add more features to the model
+    > run
+    > generate loss function, f1, accuracy graph
+        :for test, train, validation
+    > run loop for different of hyperparameter
+    > choose the best model
+    > generate report
+
+>if still no sure about how to embed feature
+    : watch LSTM part1 to see how to use feature in lstm.
+    : or read keras_bidirectional_tagger.py
+        url: https://gist.github.com/dirko/1d596ca757a541da96ac3caa6f291229
+
+>I have to start building bilstm-crf now
+    >for now use only word_token as features
+    >desired list of features
+        :stem, word window of various size, word length
+        :etc
+>how to embbed multiple feature
+    >figure out how uniq_int get convert to onehot vec
+        >>I think this is what Embedding do
+            :uniq_int -> one hot -> dimension reduction -> vector embedding
+    :do i have to do vector embedding for each feature separately ?
+        >> Can i do it all together?
+    :how to use onehot vector?
+        >> Do I have to onehot vector as input to vector embedding?
+        >> How to do onehot vector with Keras?
+        >> What function do i use?
+>figure out way to embbed CoNLL2003 dataset
+    url: https://www.depends-on-the-definition.com/sequence-tagging-lstm-crf/
+    >>use url above as a guideline
+    >>write out what is desired output input for each state.
+    >>create method that satisfy it
+>predict CoNLL2003 using bilstm-crf
+>evaluate the performance for train,test,val
+    : F1, precision
+    : loss function
